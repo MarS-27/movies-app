@@ -1,37 +1,39 @@
-import { Box, CssBaseline, ThemeProvider, createTheme } from '@mui/material';
-import { teal } from '@mui/material/colors';
+import { Box, Container, CssBaseline, ThemeProvider } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
-
-const defaultTheme = createTheme({
-  palette: {
-    primary: teal,
-    secondary: {
-      main: '#96000f',
-    },
-  },
-});
+import useColorTheme from './hooks/useColorTheme';
+import { ColorModeProvider } from './context/themeContext';
 
 const App = () => {
+  const { colorMode, theme } = useColorTheme();
+
   return (
-    <ThemeProvider theme={defaultTheme}>
-      <CssBaseline />
-      <Box
-        sx={{
-          minHeight: '100dvh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Header />
-        <main>
-          <Outlet />
-        </main>
-        <Footer />
-      </Box>
-    </ThemeProvider>
+    <ColorModeProvider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Box
+          sx={{
+            minHeight: '100dvh',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+          }}
+        >
+          <Header />
+          <Container
+            component="main"
+            maxWidth="lg"
+            sx={{
+              backgroundColor: (theme) => theme.palette.background.default,
+            }}
+          >
+            <Outlet />
+          </Container>
+          <Footer />
+        </Box>
+      </ThemeProvider>
+    </ColorModeProvider>
   );
 };
 
