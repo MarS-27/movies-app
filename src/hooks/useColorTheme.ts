@@ -1,54 +1,47 @@
 import { useState, useMemo } from 'react';
 import { createTheme } from '@mui/material/styles';
 import { type PaletteMode } from '@mui/material';
-import { type ThemeOptions } from '@mui/material/styles';
 
-const lightTheme: ThemeOptions = {
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#009688',
-      contrastText: '#ffffff',
-    },
-    secondary: {
-      main: '#f50057',
-    },
-    background: {
-      default: '#fafafa',
-      paper: '#eeeeee',
-    },
-    error: {
-      main: '#ce2d2d',
-    },
-    text: {
-      primary: '#212121',
-    },
+const lightTheme = {
+  primary: {
+    main: '#009688',
+    contrastText: '#fafafa',
+  },
+  secondary: {
+    main: '#f50057',
+  },
+  background: {
+    default: '#fafafa',
+    paper: '#eeeeee',
+  },
+  error: {
+    main: '#ce2d2d',
+  },
+  text: {
+    primary: '#212121',
   },
 };
 
-const darkTheme: ThemeOptions = {
-  palette: {
-    mode: 'dark',
-    primary: {
-      main: '#1de9b6',
-      contrastText: '#ffffff',
-    },
-    secondary: {
-      main: '#f4511e',
-    },
-    background: {
-      default: '#212121',
-      paper: '#455a64',
-    },
-    error: {
-      main: '#ce2d2d',
-    },
-    text: {
-      primary: '#fafafa',
-    },
-    warning: {
-      main: '#ed6c02',
-    },
+const darkTheme = {
+  primary: {
+    main: '#263238',
+    contrastText: '#fafafa',
+  },
+  secondary: {
+    main: '#f4511e',
+  },
+  background: {
+    default: '#212121',
+    paper: '#455a64',
+  },
+  error: {
+    main: '#ce2d2d',
+  },
+  text: {
+    primary: '#fafafa',
+  },
+  warning: {
+    main: '#ed6c02',
   },
 };
 

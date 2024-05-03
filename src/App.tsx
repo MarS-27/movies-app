@@ -1,4 +1,4 @@
-import { Box, CssBaseline, ThemeProvider } from '@mui/material';
+import { Box, Container, CssBaseline, ThemeProvider } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -21,9 +21,15 @@ const App = () => {
           }}
         >
           <Header />
-          <main>
+          <Container
+            component="main"
+            maxWidth="lg"
+            sx={{
+              backgroundColor: (theme) => theme.palette.background.default,
+            }}
+          >
             <Outlet />
-          </main>
+          </Container>
           <Footer />
         </Box>
       </ThemeProvider>
