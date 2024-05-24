@@ -9,6 +9,8 @@ import { MoviesFilter } from '../components/movies/MoviesFilter';
 import MovieCard from '../components/movies/MovieCard';
 import { type MoviesQuery } from '../types/tmdb-types';
 import { Filters } from '../types/types';
+import useFavoriteMovies from '../hooks/useFavoriteMovies';
+import { formatImageUrl } from '../utils/formatImageUrl';
 
 const initialQuery = {
   page: 1,
@@ -18,16 +20,13 @@ const initialQuery = {
 const Movies = () => {
   const [query, setQuery] = useState<MoviesQuery>(initialQuery);
 
+  const { favoriteMovies, handleAddToFavorites, handleRemoveFromFavorites } =
+    useFavoriteMovies();
+
   const { data: configuration } = useGetConfigurationQuery();
   const { data, isFetching } = useGetMoviesQuery(query);
   const movies = data?.results;
   const hasMorePages = data?.hasMorePages;
-
-  function formatImageUrl(imagePath?: string | null) {
-    return imagePath && configuration
-      ? `${configuration.images.base_url}w780${imagePath}`
-      : undefined;
-  }
 
   const onIntersect = useCallback(() => {
     if (hasMorePages) {
@@ -36,12 +35,6 @@ const Movies = () => {
   }, [hasMorePages]);
 
   const [targetRef] = useIntersectionObserver({ onIntersect });
-
-  const handleAddToFavorites = useCallback(
-    (id: number): void =>
-      alert(`Not implemented! Movie ${id} is adding  to favorites.`),
-    [],
-  );
 
   const applyFilters = (filters: Filters) => {
     const moviesFilters = {
@@ -56,7 +49,12 @@ const Movies = () => {
   };
 
   return (
-    <Grid container spacing={2} sx={{ flexWrap: 'nowrap' }}>
+    <Grid
+      container
+      spacing={2}
+      sx={{ flexWrap: 'nowrap' }}
+      direction={{ xs: 'column', md: 'row' }}
+    >
       <Grid item xs="auto">
         <MoviesFilter onApply={applyFilters} />
       </Grid>
@@ -67,17 +65,20 @@ const Movies = () => {
               No movies were found that match your query.
             </Typography>
           )}
-          <Grid container spacing={4}>
+          <Grid container spacing={2}>
             {movies?.map((m) => (
               <Grid item key={m.id} xs={12} sm={6} md={4}>
                 <MovieCard
                   key={m.id}
                   id={m.id}
                   title={m.title}
-                  overview={m.overview}
-                  popularity={m.popularity}
-                  image={formatImageUrl(m.backdrop_path)}
-                  onAddToFavorite={handleAddToFavorites}
+                  isFavoriteMovie={favoriteMovies.includes(m.id)}
+                  image={formatImageUrl(m.backdrop_path, configuration)}
+                  toggleFavorite={
+                    favoriteMovies.includes(m.id)
+                      ? handleRemoveFromFavorites
+                      : handleAddToFavorites
+                  }
                 />
               </Grid>
             ))}

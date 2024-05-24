@@ -6,6 +6,7 @@ import Home from './pages/Home.tsx';
 import { LinearProgress } from '@mui/material';
 import { Provider } from 'react-redux';
 import store from './store/store.ts';
+import { ErrorElement } from './ErrorElement.tsx';
 
 const Movies = lazy(() => import('./pages/Movies.tsx'));
 
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <AppEntrypoint />,
+    errorElement: <ErrorElement />,
     children: [
       {
         path: '/',

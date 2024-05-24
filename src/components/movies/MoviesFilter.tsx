@@ -1,4 +1,7 @@
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Autocomplete,
   Button,
   Checkbox,
@@ -11,6 +14,7 @@ import {
   TextField,
   debounce,
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
 import { type FC, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -30,6 +34,7 @@ export const MoviesFilter: FC<MoviesFilterProps> = ({ onApply }) => {
   });
 
   const [keywordsQuery, setKeywordsQuery] = useState<string>('');
+
   const { data: keywordsOptions = [], isLoading: keywordsLoading } =
     useGetKeywordsQuery(keywordsQuery, { skip: !keywordsQuery });
   const { data: genres, isLoading: genresLoading } = useGetGenresQuery();
@@ -43,7 +48,7 @@ export const MoviesFilter: FC<MoviesFilterProps> = ({ onApply }) => {
   );
 
   return (
-    <Paper sx={{ p: 0.5, maxWidth: 350 }}>
+    <Paper sx={{ p: 0.5, width: { xs: '100%', md: '250px' } }}>
       <form onSubmit={handleSubmit(onApply)}>
         <FormControl
           sx={{ m: 2, display: 'block' }}
@@ -55,6 +60,7 @@ export const MoviesFilter: FC<MoviesFilterProps> = ({ onApply }) => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <Autocomplete
+                size="small"
                 multiple
                 loading={keywordsLoading}
                 disablePortal
@@ -78,51 +84,76 @@ export const MoviesFilter: FC<MoviesFilterProps> = ({ onApply }) => {
           sx={{ m: 2, display: 'block' }}
           component="fieldset"
           variant="standard"
+          size="small"
         >
           {genresLoading ? (
-            <Skeleton width={300} height={480} />
+            <Skeleton
+              variant="rounded"
+              animation="wave"
+              sx={{ width: '100%', height: '48px' }}
+            />
           ) : (
-            <>
-              <FormLabel component="legend">Genres</FormLabel>
-              <FormGroup sx={{ maxHeight: 500 }}>
-                <Controller
-                  name="genres"
-                  control={control}
-                  render={({ field }) => (
-                    <>
-                      {genres?.map((genre) => (
-                        <FormControlLabel
-                          key={genre.id}
-                          control={
-                            <Checkbox
-                              value={genre.id}
-                              checked={field.value.includes(genre.id)}
-                              onChange={(event, checked) => {
-                                const valueNumber = Number(event.target.value);
-                                if (checked) {
-                                  field.onChange([...field.value, valueNumber]);
-                                } else {
-                                  field.onChange(
-                                    field.value.filter(
-                                      (value) => value !== valueNumber,
-                                    ),
+            <Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1-content"
+                id="panel1-header"
+              >
+                <FormLabel component="legend">Genres</FormLabel>
+              </AccordionSummary>
+              <AccordionDetails>
+                <FormGroup
+                  sx={{
+                    flexDirection: { xs: 'row', md: 'column' },
+                    columnGap: 0.5,
+                  }}
+                >
+                  <Controller
+                    name="genres"
+                    control={control}
+                    render={({ field }) => (
+                      <>
+                        {genres?.map((genre) => (
+                          <FormControlLabel
+                            key={genre.id}
+                            control={
+                              <Checkbox
+                                size="small"
+                                value={genre.id}
+                                checked={field.value.includes(genre.id)}
+                                onChange={(event, checked) => {
+                                  const valueNumber = Number(
+                                    event.target.value,
                                   );
-                                }
-                              }}
-                            />
-                          }
-                          label={genre.name}
-                        />
-                      ))}
-                    </>
-                  )}
-                />
-              </FormGroup>
-            </>
+                                  if (checked) {
+                                    field.onChange([
+                                      ...field.value,
+                                      valueNumber,
+                                    ]);
+                                  } else {
+                                    field.onChange(
+                                      field.value.filter(
+                                        (value) => value !== valueNumber,
+                                      ),
+                                    );
+                                  }
+                                }}
+                              />
+                            }
+                            label={genre.name}
+                          />
+                        ))}
+                      </>
+                    )}
+                  />
+                </FormGroup>
+              </AccordionDetails>
+            </Accordion>
           )}
         </FormControl>
         <Button
           type="submit"
+          size="small"
           sx={{ m: 2 }}
           variant="contained"
           startIcon={<FilterAltOutlinedIcon />}

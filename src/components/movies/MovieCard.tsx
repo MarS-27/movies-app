@@ -4,58 +4,45 @@ import {
   CardActions,
   CardContent,
   CardMedia,
-  IconButton,
-  Tooltip,
   Typography,
 } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link as RouterLink } from 'react-router-dom';
 import { type FC, memo } from 'react';
+import { FavoriteButton } from '../ui/FavoriteButton';
 
 type MovieCardProps = {
   id: number;
   title: string;
-  popularity: number;
-  overview: string;
+  isFavoriteMovie: boolean;
+  toggleFavorite(id: number): void;
   image?: string;
-  enableUserActions?: boolean;
-  onAddToFavorite?(id: number): void;
 };
 
 const MovieCard: FC<MovieCardProps> = ({
   id,
   title,
-  overview,
-  popularity,
-  onAddToFavorite,
-  image = '/public/movie-thumb.png',
-  enableUserActions = false,
+  isFavoriteMovie,
+  toggleFavorite,
+  image = '/movie-thumb.png',
 }) => {
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
       <CardMedia component="div" sx={{ pt: '56.25%' }} image={image} />
-      <CardContent sx={{ flexGrow: 1 }}>
-        <Typography gutterBottom variant="h5" component="h2">
+      <CardContent sx={{ flexGrow: 1, padding: 1 }}>
+        <Typography variant="body1" component="p">
           {title}
         </Typography>
-        <Typography variant="body2" color="text.secondary">
-          {overview}
-        </Typography>
-        <Typography variant="button" display="block" mt={2}>
-          {popularity}
-        </Typography>
       </CardContent>
-      <CardActions>
+      <CardActions
+        sx={{ paddingTop: 0, display: 'flex', justifyContent: 'space-between' }}
+      >
         <Button component={RouterLink} to={`/movies/${id}`} color="secondary">
           Details
         </Button>
-        {enableUserActions && (
-          <Tooltip title="Add to favorites">
-            <IconButton onClick={() => onAddToFavorite?.(id)}>
-              <FavoriteIcon />
-            </IconButton>
-          </Tooltip>
-        )}
+        <FavoriteButton
+          isFavoriteMovie={isFavoriteMovie}
+          onClick={() => toggleFavorite(id)}
+        />
       </CardActions>
     </Card>
   );
