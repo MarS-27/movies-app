@@ -1,22 +1,35 @@
-import { StrictMode, Suspense } from "react";
-import ReactDOM from "react-dom/client";
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import App from "./App.tsx";
-import Home from "./pages/Home.tsx";
-import Movies from "./pages/Movies.tsx";
-import { LinearProgress } from "@mui/material";
+import { StrictMode, Suspense, lazy } from 'react';
+import ReactDOM from 'react-dom/client';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import App from './App.tsx';
+import Home from './pages/Home.tsx';
+import { LinearProgress } from '@mui/material';
+import { Provider } from 'react-redux';
+import store from './store/store.ts';
+import { ErrorElement } from './ErrorElement.tsx';
+
+const Movies = lazy(() => import('./pages/Movies.tsx'));
+
+function AppEntrypoint() {
+  return (
+    <Provider store={store}>
+      <App />
+    </Provider>
+  );
+}
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <App />,
+    path: '/',
+    element: <AppEntrypoint />,
+    errorElement: <ErrorElement />,
     children: [
       {
-        path: "/",
+        path: '/',
         element: <Home />,
       },
       {
-        path: "movies",
+        path: 'movies',
         element: (
           <Suspense fallback={<LinearProgress sx={{ mt: 1 }} />}>
             <Movies />
@@ -27,8 +40,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <RouterProvider router={router} />
-  </StrictMode>
+  </StrictMode>,
 );

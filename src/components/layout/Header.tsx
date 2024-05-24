@@ -22,8 +22,10 @@ export const Header = () => {
 
   return (
     <AppBar
-      position="static"
-      sx={{ backgroundColor: (theme) => theme.palette.primary.main }}
+      position="fixed"
+      sx={{
+        backgroundColor: (theme) => theme.palette.primary.main,
+      }}
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
