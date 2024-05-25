@@ -78,6 +78,9 @@ export const tmdbApi = createApi({
       query: () => '/genre/movie/list',
       transformResponse: (response: { genres: Genre[] }) => response.genres,
     }),
+    getMovieById: builder.query<MovieDetails, string>({
+      query: (movieId) => `/movie/${movieId}`,
+    }),
   }),
 });
 
@@ -86,4 +89,5 @@ export const {
   useGetConfigurationQuery,
   useGetKeywordsQuery,
   useGetGenresQuery,
+  useGetMovieByIdQuery,
 } = tmdbApi;

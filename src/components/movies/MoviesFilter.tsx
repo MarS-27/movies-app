@@ -118,6 +118,7 @@ export const MoviesFilter: FC<MoviesFilterProps> = ({ onApply }) => {
                             key={genre.id}
                             control={
                               <Checkbox
+                                id={genre.id.toString()}
                                 size="small"
                                 value={genre.id}
                                 checked={field.value.includes(genre.id)}
