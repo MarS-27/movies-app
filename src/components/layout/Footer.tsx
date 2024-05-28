@@ -8,8 +8,8 @@ export const Footer = () => {
       component="footer"
       sx={{
         borderTop: (theme) => `1px solid ${theme.palette.divider}`,
-        mt: 8,
-        p: 3,
+        mt: { xs: 3, sm: 5 },
+        p: { xs: 2, sm: 3 },
       }}
     >
       <Typography variant="body2" color="text.secondary" align="center">

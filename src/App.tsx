@@ -26,7 +26,7 @@ const App = () => {
             maxWidth="lg"
             sx={{
               backgroundColor: (theme) => theme.palette.background.default,
-              paddingTop: '100px',
+              paddingTop: { xs: '80px', sm: '90px' },
             }}
           >
             <Outlet />

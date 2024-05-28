@@ -36,7 +36,7 @@ const MovieCard: FC<MovieCardProps> = ({
       <CardActions
         sx={{ paddingTop: 0, display: 'flex', justifyContent: 'space-between' }}
       >
-        <Button component={RouterLink} to={`/movies/${id}`} color="secondary">
+        <Button component={RouterLink} to={`/movie/${id}`} color="secondary">
           Details
         </Button>
         <FavoriteButton

@@ -1,4 +1,4 @@
-import { Container, Grid, LinearProgress, Typography } from '@mui/material';
+import { Box, Container, Grid, LinearProgress } from '@mui/material';
 import { useState, useCallback } from 'react';
 import {
   useGetConfigurationQuery,
@@ -11,6 +11,7 @@ import { type MoviesQuery } from '../types/tmdb-types';
 import { Filters } from '../types/types';
 import useFavoriteMovies from '../hooks/useFavoriteMovies';
 import { formatImageUrl } from '../utils/formatImageUrl';
+import { WarningMessage } from '../components/ui/WarningMessage';
 
 const initialQuery = {
   page: 1,
@@ -61,9 +62,7 @@ const Movies = () => {
       <Grid item xs={12}>
         <Container maxWidth="lg">
           {!isFetching && !movies?.length && (
-            <Typography variant="h6">
-              No movies were found that match your query.
-            </Typography>
+            <WarningMessage message="No movies were found that match your query." />
           )}
           <Grid container spacing={2}>
             {movies?.map((m) => (
@@ -83,9 +82,9 @@ const Movies = () => {
               </Grid>
             ))}
           </Grid>
-          <div ref={targetRef}>
+          <Box ref={targetRef}>
             {isFetching && <LinearProgress color="secondary" sx={{ mt: 3 }} />}
-          </div>
+          </Box>
         </Container>
       </Grid>
     </Grid>
