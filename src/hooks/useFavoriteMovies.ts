@@ -6,6 +6,7 @@ export default function useFavoriteMovies() {
   const handleAddToFavorites = useCallback(
     (id: number): void => {
       const updatedFavoriteMovies = [...favoriteMovies, id];
+
       setFavoriteMovies(updatedFavoriteMovies);
       localStorage.setItem(
         'favoriteMovies',
@@ -17,8 +18,15 @@ export default function useFavoriteMovies() {
 
   const handleRemoveFromFavorites = useCallback(
     (id: number): void => {
-      setFavoriteMovies((prev) => prev.filter((item) => item !== id));
-      localStorage.setItem('favoriteMovies', JSON.stringify(favoriteMovies));
+      const updatedFavoriteMovies = favoriteMovies.filter(
+        (item) => item !== id,
+      );
+
+      setFavoriteMovies(updatedFavoriteMovies);
+      localStorage.setItem(
+        'favoriteMovies',
+        JSON.stringify(updatedFavoriteMovies),
+      );
     },
     [favoriteMovies],
   );
