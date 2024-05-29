@@ -34,7 +34,7 @@ export type Genre = {
 
 export type Configuration = {
   images: {
-    base_url: string;
+    secure_base_url: string;
   };
 };
 

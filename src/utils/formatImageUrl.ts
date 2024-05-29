@@ -5,6 +5,6 @@ export function formatImageUrl(
   configuration?: Configuration,
 ) {
   return imagePath && configuration
-    ? `${configuration.images.base_url}w780${imagePath}`
+    ? `${configuration.images.secure_base_url}w780${imagePath}`
     : undefined;
 }
