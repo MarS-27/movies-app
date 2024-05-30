@@ -14,7 +14,7 @@ export const ToggleThemeBtn = () => {
       sx={{
         width: '50px',
         height: '50px',
-        marginLeft: '10px',
+        marginLeft: { xs: 0, sm: '10px' },
         color: (theme) => theme.palette.primary.contrastText,
       }}
       size="large"

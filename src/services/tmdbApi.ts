@@ -8,6 +8,7 @@ import type {
   MoviesQuery,
   MoviesState,
   PageResponse,
+  SearchQuery,
 } from '../types/tmdb-types';
 
 export const tmdbApi = createApi({
@@ -81,6 +82,33 @@ export const tmdbApi = createApi({
     getMovieById: builder.query<MovieDetails, string>({
       query: (movieId) => `/movie/${movieId}`,
     }),
+    searchMovies: builder.query<MoviesState, SearchQuery>({
+      query: (searchQuery) =>
+        `/search/movie?query=${searchQuery.query}&page=${searchQuery.page}`,
+      transformResponse(response: PageResponse<MovieDetails>, _, arg) {
+        return {
+          results: response.results,
+          lastPage: arg.page,
+          hasMorePages: arg.page < response.total_pages,
+        };
+      },
+      serializeQueryArgs({ endpointName }) {
+        return endpointName;
+      },
+      merge(currentCacheData, responseData) {
+        if (responseData.lastPage === 1) {
+          currentCacheData.results = responseData.results;
+        } else {
+          currentCacheData.results.push(...responseData.results);
+        }
+
+        currentCacheData.hasMorePages = responseData.hasMorePages;
+        currentCacheData.lastPage = responseData.lastPage;
+      },
+      forceRefetch({ currentArg, previousArg }) {
+        return currentArg !== previousArg;
+      },
+    }),
   }),
 });
 
@@ -90,4 +118,5 @@ export const {
   useGetKeywordsQuery,
   useGetGenresQuery,
   useGetMovieByIdQuery,
+  useSearchMoviesQuery,
 } = tmdbApi;

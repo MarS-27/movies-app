@@ -27,6 +27,11 @@ export type MoviesQuery = {
   filters: MoviesFilters;
 };
 
+export type SearchQuery = {
+  page: number;
+  query: string;
+};
+
 export type Genre = {
   id: number;
   name: string;

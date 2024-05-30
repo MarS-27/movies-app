@@ -12,14 +12,14 @@ import {
   Paper,
   Skeleton,
   TextField,
-  debounce,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterAltOutlinedIcon from '@mui/icons-material/FilterAltOutlined';
-import { type FC, useMemo, useState } from 'react';
+import { type FC } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useGetGenresQuery, useGetKeywordsQuery } from '../../services/tmdbApi';
 import { Filters } from '../../types/types';
+import useDebounce from '../../hooks/useDebounce';
 
 type MoviesFilterProps = {
   onApply(filters: Filters): void;
@@ -33,19 +33,11 @@ export const MoviesFilter: FC<MoviesFilterProps> = ({ onApply }) => {
     },
   });
 
-  const [keywordsQuery, setKeywordsQuery] = useState<string>('');
+  const { debouncedValue, debounceInputValue } = useDebounce();
 
   const { data: keywordsOptions = [], isLoading: keywordsLoading } =
-    useGetKeywordsQuery(keywordsQuery, { skip: !keywordsQuery });
+    useGetKeywordsQuery(debouncedValue, { skip: !debouncedValue });
   const { data: genres, isLoading: genresLoading } = useGetGenresQuery();
-
-  const debouncedFetchKeywordsOptions = useMemo(
-    () =>
-      debounce((query: string) => {
-        setKeywordsQuery(query);
-      }, 1000),
-    [],
-  );
 
   return (
     <Paper sx={{ p: 0.5, width: { xs: '100%', md: '250px' } }}>
@@ -70,9 +62,7 @@ export const MoviesFilter: FC<MoviesFilterProps> = ({ onApply }) => {
                 onChange={(_, value) => onChange(value)}
                 value={value}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
-                onInputChange={(_, value) =>
-                  debouncedFetchKeywordsOptions(value)
-                }
+                onInputChange={(_, value) => debounceInputValue(value)}
                 renderInput={(params) => (
                   <TextField {...params} label="Keywords" />
                 )}

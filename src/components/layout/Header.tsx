@@ -1,6 +1,5 @@
 import {
   AppBar,
-  Box,
   Container,
   IconButton,
   Toolbar,
@@ -8,10 +7,11 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import LocalMoviesRoundedIcon from '@mui/icons-material/LocalMoviesRounded';
-import { ToggleThemeBtn } from './ToggleThemeBtn';
+import { ToggleThemeBtn } from '../ui/ToggleThemeBtn';
 import { useState } from 'react';
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
+import { SearchField } from '../ui/SearchField';
 
 export const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -29,28 +29,27 @@ export const Header = () => {
     >
       <Container maxWidth="lg">
         <Toolbar disableGutters>
-          <LocalMoviesRoundedIcon fontSize="large" sx={{ mr: 2 }} />
+          <LocalMoviesRoundedIcon
+            fontSize="large"
+            sx={{ mr: { xs: 0.5, sm: 2 } }}
+          />
           <Typography
             variant="h6"
             color="inherit"
             noWrap
-            sx={{ display: { xs: 'none', sm: 'block' } }}
+            sx={{ display: { xs: 'none', sm: 'block' }, flexGrow: 1 }}
           >
             The MDb
           </Typography>
 
-          <Box
-            sx={{
-              flexGrow: 1,
-            }}
-          >
-            <DesktopNav />
+          <SearchField />
 
-            <MobileNav
-              isMobileOpen={mobileOpen}
-              handleMobileToggle={handleMobileToggle}
-            />
-          </Box>
+          <DesktopNav />
+
+          <MobileNav
+            isMobileOpen={mobileOpen}
+            handleMobileToggle={handleMobileToggle}
+          />
 
           <IconButton
             color="inherit"
