@@ -2,18 +2,28 @@ import { CloseRounded } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
 import {
   Box,
+  Button,
   CircularProgress,
   Fade,
   IconButton,
+  List,
+  ListItem,
+  ListItemButton,
   Paper,
   Popper,
   Typography,
 } from '@mui/material';
 import InputBase from '@mui/material/InputBase';
 import { alpha, styled } from '@mui/material/styles';
-import { useRef, type FC } from 'react';
+import { useEffect, useRef, useState, type FC } from 'react';
 import useDebounce from '../../hooks/useDebounce';
-import { useSearchMoviesQuery } from '../../services/tmdbApi';
+import {
+  useGetConfigurationQuery,
+  useSearchMoviesQuery,
+} from '../../services/tmdbApi';
+import { Link as RouterLink } from 'react-router-dom';
+import { formatImageUrl } from '../../utils/formatImageUrl';
+import { WarningMessage } from './WarningMessage';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -56,14 +66,25 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 export const SearchField: FC = () => {
+  const [pageNum, setPageNum] = useState(1);
   const { debouncedValue, debounceInputValue } = useDebounce();
+  const { data: configuration } = useGetConfigurationQuery();
 
   const anchorElRef = useRef<HTMLDivElement | null>(null);
 
-  const { data: searchedMovies, isFetching } = useSearchMoviesQuery({
-    page: 1,
+  const { data, isFetching, isLoading } = useSearchMoviesQuery({
+    page: pageNum,
     query: debouncedValue,
   });
+
+  const searchedMovies = data?.results;
+  const hasMorePages = data?.hasMorePages;
+
+  useEffect(() => {
+    setPageNum(1);
+  }, [debouncedValue]);
+
+  console.log(pageNum);
 
   return (
     <Search ref={anchorElRef}>
@@ -76,7 +97,7 @@ export const SearchField: FC = () => {
         onChange={(e) => debounceInputValue(e.target.value)}
       />
       <SearchIconWrapper right={0} top={0}>
-        {(debouncedValue || searchedMovies?.results.length) && !isFetching ? (
+        {(debouncedValue || searchedMovies?.length) && !isFetching ? (
           <IconButton
             size="small"
             aria-label="clear search"
@@ -101,20 +122,72 @@ export const SearchField: FC = () => {
         )}
       </SearchIconWrapper>
       <Popper
-        sx={{ zIndex: 1200 }}
-        open={
-          (!!debouncedValue || !!searchedMovies?.results.length) && !isFetching
-        }
+        sx={{
+          p: 1,
+          zIndex: 1200,
+        }}
+        open={(!!debouncedValue || !!searchedMovies?.length) && !isLoading}
         placement="bottom"
         anchorEl={anchorElRef.current}
         transition
       >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={200}>
-            <Paper>
-              {searchedMovies?.results.map((m) => (
-                <Typography sx={{ p: 2 }}>{m.title}</Typography>
-              ))}
+            <Paper
+              sx={{
+                p: 1,
+                minWidth: '320px',
+                width: { xs: '95vw', sm: '50vw' },
+                maxHeight: '300px',
+                overflow: 'auto',
+              }}
+            >
+              <List disablePadding>
+                {!searchedMovies?.length && !isFetching && (
+                  <WarningMessage message="No movies were found that match your query." />
+                )}
+
+                {searchedMovies?.length && (
+                  <>
+                    {searchedMovies.map((m) => (
+                      <ListItem
+                        key={m.id}
+                        component={RouterLink}
+                        to={`/movie/${m.id}`}
+                        disablePadding
+                        sx={{
+                          color: (theme) => theme.palette.text.primary,
+                        }}
+                      >
+                        <ListItemButton divider>
+                          <img
+                            style={{
+                              width: '120px',
+                              height: 'auto',
+                              objectFit: 'cover',
+                              borderRadius: '8px',
+                              marginRight: '16px',
+                            }}
+                            src={formatImageUrl(m.backdrop_path, configuration)}
+                            alt={m.title}
+                          />
+                          <Typography>{m.title}</Typography>
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </>
+                )}
+              </List>
+              {hasMorePages && (
+                <Button
+                  variant="outlined"
+                  size="small"
+                  sx={{ marginTop: 1, width: '100%' }}
+                  onClick={() => setPageNum((q) => q + 1)}
+                >
+                  More results
+                </Button>
+              )}
             </Paper>
           </Fade>
         )}
