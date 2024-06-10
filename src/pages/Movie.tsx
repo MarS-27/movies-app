@@ -47,7 +47,11 @@ const Movie = () => {
                 objectFit: 'cover',
                 borderRadius: '8px',
               }}
-              src={formatImageUrl(movie?.poster_path, configuration)}
+              src={
+                movie?.poster_path
+                  ? formatImageUrl(movie.poster_path, configuration)
+                  : '/movie-thumb.png'
+              }
               alt={movie?.title}
             />
           </Grid>

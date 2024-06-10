@@ -11,7 +11,7 @@ import { ToggleThemeBtn } from '../ui/ToggleThemeBtn';
 import { useState } from 'react';
 import { DesktopNav } from './DesktopNav';
 import { MobileNav } from './MobileNav';
-import { SearchField } from '../ui/SearchField';
+import { SearchBar } from '../ui/SearchBar';
 
 export const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -42,7 +42,7 @@ export const Header = () => {
             The MDb
           </Typography>
 
-          <SearchField />
+          <SearchBar />
 
           <DesktopNav />
 
