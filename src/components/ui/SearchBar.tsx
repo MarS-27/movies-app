@@ -55,7 +55,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: '100%',
   '& .MuiInputBase-input': {
     padding: theme.spacing(1, 5),
-    transition: theme.transitions.create('width'),
+    transition: theme.transitions.create('width', { duration: 300 }),
     [theme.breakpoints.up('sm')]: {
       width: '12ch',
       '&:focus': {
@@ -80,6 +80,7 @@ export const SearchBar: FC = () => {
   const { data: configuration } = useGetConfigurationQuery();
 
   const anchorElRef = useRef<HTMLDivElement | null>(null);
+  const moviesListRef = useRef<HTMLDivElement | null>(null);
 
   const { data, isFetching } = useSearchMoviesQuery({
     page: searchInputState.pageNum,
@@ -96,7 +97,20 @@ export const SearchBar: FC = () => {
 
   useEffect(() => {
     debounceInputValue(searchInputState.searchValue);
+
+    if (searchInputState.pageNum !== 1) {
+      setSearchInputState({
+        ...searchInputState,
+        pageNum: 1,
+      });
+    }
   }, [searchInputState.searchValue, debounceInputValue]);
+
+  useEffect(() => {
+    if (searchInputState.pageNum === 1 && !isFetching) {
+      moviesListRef?.current?.scrollTo(0, 0);
+    }
+  }, [searchInputState.pageNum, isFetching]);
 
   return (
     <>
@@ -147,14 +161,18 @@ export const SearchBar: FC = () => {
           p: 1,
           zIndex: 1200,
         }}
-        open={Boolean(debouncedValue)}
+        open={Boolean(
+          debouncedValue && (searchedMovies?.length || !isFetching),
+        )}
         placement="bottom"
         anchorEl={anchorElRef.current}
         transition
       >
         {({ TransitionProps }) => (
-          <Fade {...TransitionProps} in={!isFetching} timeout={200}>
+          <Fade {...TransitionProps} timeout={{ enter: 300, exit: 0 }}>
             <Paper
+              ref={moviesListRef}
+              elevation={8}
               sx={{
                 p: 1,
                 minWidth: '320px',
@@ -174,7 +192,7 @@ export const SearchBar: FC = () => {
                       sx={{
                         color: (theme) => theme.palette.text.primary,
                       }}
-                      onClick={() => debounceInputValue('')}
+                      onClick={resetSearch}
                     >
                       <ListItemButton divider>
                         <img
@@ -203,7 +221,7 @@ export const SearchBar: FC = () => {
 
               {hasMorePages && (
                 <Button
-                  variant="outlined"
+                  variant="contained"
                   size="small"
                   sx={{ marginTop: 1, width: '100%' }}
                   onClick={() =>
